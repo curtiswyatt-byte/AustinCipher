@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(open:*)",
+      "Bash(xcrun simctl:*)",
+      "Bash(killall:*)",
+      "Bash(sips:*)",
+      "Bash(/usr/bin/ruby:*)",
+      "Bash(swift:*)",
+      "Bash(find:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
