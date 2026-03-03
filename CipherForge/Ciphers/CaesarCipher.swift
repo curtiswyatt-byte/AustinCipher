@@ -7,17 +7,21 @@ class CaesarCipher: CipherEngine {
 
     func encrypt(_ text: String) -> String {
         let shift = settings["shift"] as? Int ?? 3
-        return text.map { char in
-            guard char.isEnglishLetter else { return char }
-            return char.shifted(by: shift)
-        }.map(String.init).joined()
+        var result = ""
+        result.reserveCapacity(text.count)
+        for char in text {
+            result.append(char.isEnglishLetter ? char.shifted(by: shift) : char)
+        }
+        return result
     }
 
     func decrypt(_ text: String) -> String {
         let shift = settings["shift"] as? Int ?? 3
-        return text.map { char in
-            guard char.isEnglishLetter else { return char }
-            return char.shifted(by: -shift)
-        }.map(String.init).joined()
+        var result = ""
+        result.reserveCapacity(text.count)
+        for char in text {
+            result.append(char.isEnglishLetter ? char.shifted(by: -shift) : char)
+        }
+        return result
     }
 }

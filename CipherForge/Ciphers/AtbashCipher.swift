@@ -5,16 +5,20 @@ class AtbashCipher: CipherEngine {
     var description: String = "Ancient Hebrew cipher - reverses the alphabet (A↔Z, B↔Y)"
     var settings: [String: Any] = [:]
 
+    private static let upperA = Int(Character("A").asciiValue!)
+    private static let lowerA = Int(Character("a").asciiValue!)
+
     func encrypt(_ text: String) -> String {
-        return text.map { char in
-            guard char.isEnglishLetter else { return char }
-            let isUpper = char.isUppercase
-            let base = isUpper ? Character("A") : Character("a")
-            let baseValue = Int(base.asciiValue!)
+        var result = ""
+        result.reserveCapacity(text.count)
+        for char in text {
+            guard char.isEnglishLetter else { result.append(char); continue }
+            let base = char.isUppercase ? Self.upperA : Self.lowerA
             let charValue = Int(char.asciiValue!)
-            let reversed = baseValue + (25 - (charValue - baseValue))
-            return Character(UnicodeScalar(reversed)!)
-        }.map(String.init).joined()
+            let reversed = base + (25 - (charValue - base))
+            result.append(Character(UnicodeScalar(reversed)!))
+        }
+        return result
     }
 
     func decrypt(_ text: String) -> String {

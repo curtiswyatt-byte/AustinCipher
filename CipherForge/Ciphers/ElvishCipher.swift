@@ -5,10 +5,6 @@ class ElvishCipher: CipherEngine {
     var description: String = "Fantasy language with mystical character substitutions"
     var settings: [String: Any] = [:]
 
-    // Hybrid approach: Use rune mapping but encode it in ASCII-compatible format
-    // Format: Each letter becomes ◈{letter}◈ which preserves the letter for other ciphers
-    // The ◈ markers indicate this is Elvish-encoded
-
     private let runeDisplay: [Character: String] = [
         "A": "ᚨ", "B": "ᛒ", "C": "ᚲ", "D": "ᛞ", "E": "ᛖ",
         "F": "ᚠ", "G": "ᚷ", "H": "ᚺ", "I": "ᛁ", "J": "ᛃ",
@@ -18,42 +14,30 @@ class ElvishCipher: CipherEngine {
         "Z": "ᛉ"
     ]
 
+    private lazy var runeToLetter: [String: Character] = {
+        Dictionary(uniqueKeysWithValues: runeDisplay.map { ($1, $0) })
+    }()
+
     func encrypt(_ text: String) -> String {
         return text.uppercased().map { char in
-            if char.isEnglishLetter {
-                // Wrap letter in Elvish markers - preserves the actual letter for other ciphers
-                return "◈\(char)◈"
-            } else {
-                return String(char)
-            }
+            runeDisplay[char] ?? String(char)
         }.joined()
     }
 
     func decrypt(_ text: String) -> String {
         var result = ""
-        var i = text.startIndex
+        var scalars = Array(text.unicodeScalars)
+        var i = 0
 
-        while i < text.endIndex {
-            // Check for Elvish marker
-            if text[i] == "◈" {
-                let nextIdx = text.index(after: i)
-                if nextIdx < text.endIndex {
-                    let letter = text[nextIdx]
-                    let afterLetter = text.index(after: nextIdx)
-
-                    // Check if followed by closing marker
-                    if afterLetter < text.endIndex && text[afterLetter] == "◈" {
-                        // Extract the letter
-                        result.append(letter)
-                        i = text.index(after: afterLetter)
-                        continue
-                    }
-                }
+        while i < scalars.count {
+            // Try to match a known rune (each rune is a single Unicode scalar)
+            let runeStr = String(scalars[i])
+            if let letter = runeToLetter[runeStr] {
+                result.append(letter)
+            } else {
+                result.append(Character(scalars[i]))
             }
-
-            // Regular character
-            result.append(text[i])
-            i = text.index(after: i)
+            i += 1
         }
 
         return result

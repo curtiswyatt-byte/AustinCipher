@@ -69,12 +69,13 @@ class RailFenceCipher: CipherEngine {
             }
         }
 
-        // Fill with characters
+        // Fill with characters — pre-convert to array for O(1) index access
+        let chars = Array(text)
         var index = 0
         for r in 0..<rails {
             for c in 0..<text.count {
                 if fence[r][c] == "*" {
-                    fence[r][c] = text[text.index(text.startIndex, offsetBy: index)]
+                    fence[r][c] = chars[index]
                     index += 1
                 }
             }

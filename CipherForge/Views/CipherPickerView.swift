@@ -12,16 +12,24 @@ struct CipherPickerView: View {
                 // Header
                 HStack {
                     Spacer()
-                    Text("Select Cipher")
-                        .font(.headline)
-                        .foregroundColor(.white)
+                    VStack(spacing: 2) {
+                        Text("Add Ciphers")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        if !selectedCiphers.isEmpty {
+                            Text("\(selectedCiphers.count) in chain")
+                                .font(.system(size: 11, design: .rounded))
+                                .foregroundColor(.orange)
+                        }
+                    }
                     Spacer()
                 }
                 .padding()
                 .background(Color.black.opacity(0.9))
                 .overlay(alignment: .trailing) {
                     Button(action: { dismiss() }) {
-                        Image(systemName: "xmark.circle.fill")
+                        Text("Done")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
                             .foregroundColor(.orange)
                             .padding()
                     }
@@ -32,7 +40,6 @@ struct CipherPickerView: View {
                         ForEach(CipherType.allCases, id: \.self) { type in
                             Button(action: {
                                 selectedCiphers.append(CipherConfig(cipherType: type, settings: type.defaultSettings()))
-                                dismiss()
                             }) {
                                 HStack {
                                     Text(type.rawValue)
@@ -40,6 +47,13 @@ struct CipherPickerView: View {
                                         .foregroundColor(.white)
 
                                     Spacer()
+
+                                    let count = selectedCiphers.filter { $0.cipherType == type }.count
+                                    if count > 0 {
+                                        Text("×\(count)")
+                                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                                            .foregroundColor(.orange)
+                                    }
 
                                     Image(systemName: "plus.circle")
                                         .foregroundColor(.orange)

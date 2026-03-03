@@ -5,28 +5,32 @@ class SubstitutionCipher: CipherEngine {
     var description: String = "Replaces each letter with another letter"
     var settings: [String: Any] = ["key": "QWERTYUIOPASDFGHJKLZXCVBNM"]
 
+    private static let alphabet: [Character] = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
     func encrypt(_ text: String) -> String {
         let key = (settings["key"] as? String ?? "QWERTYUIOPASDFGHJKLZXCVBNM").uppercased()
         guard key.count == 26 else { return text }
+        let keyChars = Array(key)
 
-        let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         var mapping: [Character: Character] = [:]
-
-        for (index, char) in alphabet.enumerated() {
-            let keyIndex = key.index(key.startIndex, offsetBy: index)
-            mapping[char] = key[keyIndex]
+        mapping.reserveCapacity(26)
+        for (index, char) in Self.alphabet.enumerated() {
+            mapping[char] = keyChars[index]
         }
 
-        // Optimization: Use single-pass string building instead of map().map().joined()
         var result = ""
         result.reserveCapacity(text.count)
         for char in text {
-            let upperChar = char.uppercased().first!
-            if let replacement = mapping[upperChar] {
-                result.append(char.isUppercase ? replacement : Character(replacement.lowercased()))
-            } else {
-                result.append(char)
+            if let ascii = char.asciiValue {
+                let upperChar: Character = ascii >= 97 && ascii <= 122
+                    ? Character(UnicodeScalar(ascii - 32))
+                    : Character(UnicodeScalar(ascii))
+                if let replacement = mapping[upperChar] {
+                    result.append(char.isUppercase ? replacement : Character(replacement.lowercased()))
+                    continue
+                }
             }
+            result.append(char)
         }
         return result
     }
@@ -34,25 +38,27 @@ class SubstitutionCipher: CipherEngine {
     func decrypt(_ text: String) -> String {
         let key = (settings["key"] as? String ?? "QWERTYUIOPASDFGHJKLZXCVBNM").uppercased()
         guard key.count == 26 else { return text }
+        let keyChars = Array(key)
 
-        let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         var reverseMapping: [Character: Character] = [:]
-
-        for (index, char) in alphabet.enumerated() {
-            let keyIndex = key.index(key.startIndex, offsetBy: index)
-            reverseMapping[key[keyIndex]] = char
+        reverseMapping.reserveCapacity(26)
+        for (index, char) in Self.alphabet.enumerated() {
+            reverseMapping[keyChars[index]] = char
         }
 
-        // Optimization: Use single-pass string building instead of map().map().joined()
         var result = ""
         result.reserveCapacity(text.count)
         for char in text {
-            let upperChar = char.uppercased().first!
-            if let replacement = reverseMapping[upperChar] {
-                result.append(char.isUppercase ? replacement : Character(replacement.lowercased()))
-            } else {
-                result.append(char)
+            if let ascii = char.asciiValue {
+                let upperChar: Character = ascii >= 97 && ascii <= 122
+                    ? Character(UnicodeScalar(ascii - 32))
+                    : Character(UnicodeScalar(ascii))
+                if let replacement = reverseMapping[upperChar] {
+                    result.append(char.isUppercase ? replacement : Character(replacement.lowercased()))
+                    continue
+                }
             }
+            result.append(char)
         }
         return result
     }

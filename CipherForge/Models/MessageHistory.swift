@@ -56,8 +56,12 @@ class MessageHistory: ObservableObject {
     }
 
     private func saveHistory() {
-        if let encoded = try? JSONEncoder().encode(records) {
-            UserDefaults.standard.set(encoded, forKey: saveKey)
+        let snapshot = records
+        let key = saveKey
+        DispatchQueue.global(qos: .background).async {
+            if let encoded = try? JSONEncoder().encode(snapshot) {
+                UserDefaults.standard.set(encoded, forKey: key)
+            }
         }
     }
 

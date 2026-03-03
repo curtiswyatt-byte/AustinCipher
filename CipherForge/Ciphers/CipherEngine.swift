@@ -12,7 +12,10 @@ protocol CipherEngine {
 // Helper extension for character manipulation
 extension Character {
     var isEnglishLetter: Bool {
-        return ("a"..."z").contains(self.lowercased().first ?? Character(""))
+        if let ascii = self.asciiValue {
+            return (ascii >= 65 && ascii <= 90) || (ascii >= 97 && ascii <= 122)
+        }
+        return false
     }
 
     func shifted(by amount: Int) -> Character {

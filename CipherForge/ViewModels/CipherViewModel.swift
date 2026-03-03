@@ -31,70 +31,43 @@ class CipherViewModel: ObservableObject {
             return
         }
 
-        var result = inputText
+        // Snapshot values so background thread doesn't touch @Published state
+        let text = inputText
+        let mode = selectedMode
+        let encrypting = isEncrypting
 
-        #if DEBUG
-        print("🔍 Processing text - Mode: \(selectedMode.name), isEncrypting: \(isEncrypting)")
-        print("🔍 Input: \(inputText)")
-        print("🔍 Cipher chain count: \(selectedMode.cipherChain.count)")
-        #endif
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            var result = text
 
-        if isEncrypting {
-            // Encrypt through cipher chain
-            for (index, config) in selectedMode.cipherChain.enumerated() {
-                var engine = config.cipherType.createEngine()
-                #if DEBUG
-                print("🔍 [Encrypt \(index+1)] Cipher: \(config.cipherType.rawValue)")
-                print("🔍 [Encrypt \(index+1)] Settings before: \(engine.settings)")
-                #endif
-                // Apply settings
-                for (key, value) in config.settings {
-                    engine.settings[key] = value.anyValue
+            if encrypting {
+                for config in mode.cipherChain {
+                    var engine = config.cipherType.createEngine()
+                    for (key, value) in config.settings {
+                        engine.settings[key] = value.anyValue
+                    }
+                    result = engine.encrypt(result)
                 }
-                #if DEBUG
-                print("🔍 [Encrypt \(index+1)] Settings after: \(engine.settings)")
-                print("🔍 [Encrypt \(index+1)] Before: \(result)")
-                #endif
-                result = engine.encrypt(result)
-                #if DEBUG
-                print("🔍 [Encrypt \(index+1)] After: \(result)")
-                #endif
+            } else {
+                for config in mode.cipherChain.reversed() {
+                    var engine = config.cipherType.createEngine()
+                    for (key, value) in config.settings {
+                        engine.settings[key] = value.anyValue
+                    }
+                    result = engine.decrypt(result)
+                }
             }
-        } else {
-            // Decrypt in reverse order
-            for (index, config) in selectedMode.cipherChain.reversed().enumerated() {
-                var engine = config.cipherType.createEngine()
-                #if DEBUG
-                print("🔍 [Decrypt \(index+1)] Cipher: \(config.cipherType.rawValue)")
-                print("🔍 [Decrypt \(index+1)] Settings before: \(engine.settings)")
-                #endif
-                // Apply settings
-                for (key, value) in config.settings {
-                    engine.settings[key] = value.anyValue
-                }
-                #if DEBUG
-                print("🔍 [Decrypt \(index+1)] Settings after: \(engine.settings)")
-                print("🔍 [Decrypt \(index+1)] Before: \(result)")
-                #endif
-                result = engine.decrypt(result)
-                #if DEBUG
-                print("🔍 [Decrypt \(index+1)] After: \(result)")
-                #endif
+
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.outputText = result
+                self.history.addRecord(
+                    original: text,
+                    encrypted: result,
+                    mode: mode.name,
+                    isEncryption: encrypting
+                )
             }
         }
-
-        outputText = result
-        #if DEBUG
-        print("🔍 Final output: \(result)")
-        #endif
-
-        // Add to history
-        history.addRecord(
-            original: inputText,
-            encrypted: outputText,
-            mode: selectedMode.name,
-            isEncryption: isEncrypting
-        )
     }
 
     func swapInputOutput() {

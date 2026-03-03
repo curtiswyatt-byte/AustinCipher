@@ -5,11 +5,12 @@ class NumberCipher: CipherEngine {
     var description: String = "Replaces letters with numbers (A=1, B=2, etc.)"
     var settings: [String: Any] = [:]
 
+    private static let aAscii = Int(Character("A").asciiValue!)
+
     func encrypt(_ text: String) -> String {
         return text.uppercased().map { char in
             if char.isEnglishLetter {
-                let value = Int(char.asciiValue!) - Int(Character("A").asciiValue!) + 1
-                // Wrap number in markers so other ciphers skip it
+                let value = Int(char.asciiValue!) - Self.aAscii + 1
                 return "⬡\(value)⬡"
             } else {
                 return String(char)
@@ -38,7 +39,7 @@ class NumberCipher: CipherEngine {
                     // Check if we found closing marker and have a valid number
                     if j < text.endIndex && text[j] == "⬡" {
                         if let num = Int(numStr), num >= 1, num <= 26 {
-                            let charValue = Int(Character("A").asciiValue!) + num - 1
+                            let charValue = Self.aAscii + num - 1
                             result.append(Character(UnicodeScalar(charValue)!))
                             i = text.index(after: j)
                             continue
