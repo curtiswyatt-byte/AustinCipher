@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = CipherViewModel()
+    @State private var inputText = ""
     @State private var showingModeSelection = false
     @State private var showingHistory = false
     @State private var showingShare = false
@@ -87,7 +88,7 @@ struct ContentView: View {
                                 )
                                 .frame(height: 90)
 
-                            TextEditor(text: $viewModel.inputText)
+                            TextEditor(text: $inputText)
                                 .scrollContentBackground(.hidden)
                                 .background(Color.clear)
                                 .foregroundColor(.white)
@@ -107,7 +108,7 @@ struct ContentView: View {
 
                     // Action Buttons
                     HStack(spacing: 15) {
-                        Button(action: { viewModel.swapInputOutput() }) {
+                        Button(action: { inputText = viewModel.swapInputOutput(currentInput: inputText) }) {
                             Image(systemName: "arrow.up.arrow.down.circle.fill")
                                 .font(.title2)
                                 .foregroundColor(.orange)
@@ -115,7 +116,7 @@ struct ContentView: View {
 
                         Button(action: {
                             isInputFocused = false
-                            viewModel.processText()
+                            viewModel.processText(input: inputText)
                         }) {
                             HStack {
                                 Image(systemName: viewModel.isEncrypting ? "lock.fill" : "lock.open.fill")
@@ -141,7 +142,7 @@ struct ContentView: View {
                             .cornerRadius(12)
                         }
 
-                        Button(action: { viewModel.clearAll() }) {
+                        Button(action: { inputText = ""; viewModel.clearAll() }) {
                             Image(systemName: "eraser.fill")
                                 .font(.title2)
                                 .foregroundColor(.orange)
@@ -269,7 +270,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingHistory) {
             HistoryView(history: viewModel.history) { text in
-                viewModel.inputText = text
+                inputText = text
                 showingHistory = false
             }
         }

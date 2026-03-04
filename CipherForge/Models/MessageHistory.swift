@@ -35,11 +35,11 @@ class MessageHistory: ObservableObject {
             modeName: mode,
             isEncryption: isEncryption
         )
-        records.insert(record, at: 0)
+        records.append(record)
 
         // Security: Limit history size to prevent unbounded growth
         if records.count > maxHistorySize {
-            records = Array(records.prefix(maxHistorySize))
+            records.removeFirst()
         }
 
         saveHistory()

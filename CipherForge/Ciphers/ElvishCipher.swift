@@ -26,20 +26,15 @@ class ElvishCipher: CipherEngine {
 
     func decrypt(_ text: String) -> String {
         var result = ""
-        var scalars = Array(text.unicodeScalars)
-        var i = 0
-
-        while i < scalars.count {
-            // Try to match a known rune (each rune is a single Unicode scalar)
-            let runeStr = String(scalars[i])
+        result.reserveCapacity(text.unicodeScalars.count)
+        for scalar in text.unicodeScalars {
+            let runeStr = String(scalar)
             if let letter = runeToLetter[runeStr] {
                 result.append(letter)
             } else {
-                result.append(Character(scalars[i]))
+                result.append(Character(scalar))
             }
-            i += 1
         }
-
         return result
     }
 }

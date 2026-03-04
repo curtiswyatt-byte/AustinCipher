@@ -118,7 +118,7 @@ enum CodableValue: Codable {
 
 // Preset modes with fun names
 extension CipherMode {
-    static var presets: [CipherMode] {
+    static let presets: [CipherMode] = {
         [
             CipherMode(
                 name: "Pirate's Code",
@@ -222,5 +222,5 @@ extension CipherMode {
                 ]
             )
         ]
-    }
+    }()
 }

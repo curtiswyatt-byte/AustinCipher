@@ -2,7 +2,6 @@ import Foundation
 import SwiftUI
 
 class CipherViewModel: ObservableObject {
-    @Published var inputText: String = ""
     @Published var outputText: String = ""
     @Published var selectedMode: CipherMode
     @Published var availableModes: [CipherMode]
@@ -18,21 +17,21 @@ class CipherViewModel: ObservableObject {
         loadCustomModes()
     }
 
-    func processText() {
-        guard !inputText.isEmpty else {
+    func processText(input: String) {
+        guard !input.isEmpty else {
             outputText = ""
             return
         }
 
         // Security: Limit input length to prevent memory exhaustion (500KB limit)
         let maxInputBytes = 500_000
-        guard inputText.utf8.count <= maxInputBytes else {
+        guard input.utf8.count <= maxInputBytes else {
             outputText = "Error: Input text exceeds maximum size of 500KB"
             return
         }
 
         // Snapshot values so background thread doesn't touch @Published state
-        let text = inputText
+        let text = input
         let mode = selectedMode
         let encrypting = isEncrypting
 
@@ -70,15 +69,15 @@ class CipherViewModel: ObservableObject {
         }
     }
 
-    func swapInputOutput() {
-        let temp = inputText
-        inputText = outputText
-        outputText = temp
+    /// Swaps input and output. Returns the new input text (old output).
+    func swapInputOutput(currentInput: String) -> String {
+        let newInput = outputText
+        outputText = currentInput
         isEncrypting.toggle()
+        return newInput
     }
 
     func clearAll() {
-        inputText = ""
         outputText = ""
     }
 
@@ -199,8 +198,11 @@ class CipherViewModel: ObservableObject {
     }
 
     func saveCustomModes() {
-        if let encoded = try? JSONEncoder().encode(customModes) {
-            UserDefaults.standard.set(encoded, forKey: "CustomModes")
+        let snapshot = customModes
+        DispatchQueue.global(qos: .background).async {
+            if let encoded = try? JSONEncoder().encode(snapshot) {
+                UserDefaults.standard.set(encoded, forKey: "CustomModes")
+            }
         }
     }
 

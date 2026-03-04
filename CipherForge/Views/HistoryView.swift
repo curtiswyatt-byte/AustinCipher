@@ -28,7 +28,7 @@ struct HistoryView: View {
                 } else {
                     ScrollView {
                         LazyVStack(spacing: 15) {
-                            ForEach(history.records) { record in
+                            ForEach(history.records.reversed()) { record in
                                 HistoryCard(record: record, onLoadText: onLoadText.map { callback in
                                     { text in callback(text); dismiss() }
                                 })
