@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var showingShare = false
     @State private var showingCustomMode = false
     @State private var showingImport = false
+    @FocusState private var isInputFocused: Bool
 
     var body: some View {
         ZStack {
@@ -17,6 +18,8 @@ struct ContentView: View {
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
+            // Tap background to dismiss keyboard
+            .onTapGesture { isInputFocused = false }
 
             VStack(spacing: 12) {
                 // Header
@@ -91,6 +94,14 @@ struct ContentView: View {
                                 .font(.system(size: 14, design: .monospaced))
                                 .padding(6)
                                 .frame(height: 90)
+                                .focused($isInputFocused)
+                                .toolbar {
+                                    ToolbarItemGroup(placement: .keyboard) {
+                                        Spacer()
+                                        Button("Done") { isInputFocused = false }
+                                            .foregroundColor(.orange)
+                                    }
+                                }
                         }
                     }
 
@@ -102,7 +113,10 @@ struct ContentView: View {
                                 .foregroundColor(.orange)
                         }
 
-                        Button(action: { viewModel.processText() }) {
+                        Button(action: {
+                            isInputFocused = false
+                            viewModel.processText()
+                        }) {
                             HStack {
                                 Image(systemName: viewModel.isEncrypting ? "lock.fill" : "lock.open.fill")
                                 Text(viewModel.isEncrypting ? "ENCRYPT" : "DECRYPT")
@@ -254,7 +268,10 @@ struct ContentView: View {
             ModeSelectionView(viewModel: viewModel, isPresented: $showingModeSelection)
         }
         .sheet(isPresented: $showingHistory) {
-            HistoryView(history: viewModel.history)
+            HistoryView(history: viewModel.history) { text in
+                viewModel.inputText = text
+                showingHistory = false
+            }
         }
         .sheet(isPresented: $showingShare) {
             ShareView(viewModel: viewModel, isPresented: $showingShare)

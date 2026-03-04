@@ -120,14 +120,7 @@ class CipherViewModel: ObservableObject {
         return code
     }
 
-    func generatePIN() -> String {
-        // Generate a simple 6-digit PIN based on the mode
-        let hash = selectedMode.name.hashValue
-        let pin = abs(hash) % 1000000
-        return String(format: "%06d", pin)
-    }
-
-    func importFromShareCode(_ code: String) -> Bool {
+    func importFromShareCode(_ code: String, name: String = "Imported Mode") -> Bool {
         // Parse share code format: CF:CAE(shift:7)>RAI(rails:4)>VIG(keyword:FORTRESS)
         guard code.hasPrefix("CF:") else { return false }
 
@@ -176,7 +169,7 @@ class CipherViewModel: ObservableObject {
 
         // Create new custom mode
         let newMode = CipherMode(
-            name: "Imported Mode",
+            name: name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Imported Mode" : name.trimmingCharacters(in: .whitespacesAndNewlines),
             emoji: "📥",
             description: "Imported cipher configuration",
             cipherChain: cipherChain,

@@ -4,6 +4,8 @@ struct CipherPickerView: View {
     @Binding var selectedCiphers: [CipherConfig]
     @Environment(\.dismiss) var dismiss
 
+    @State private var configuringType: CipherType?
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
@@ -39,12 +41,23 @@ struct CipherPickerView: View {
                     VStack(spacing: 12) {
                         ForEach(CipherType.allCases, id: \.self) { type in
                             Button(action: {
-                                selectedCiphers.append(CipherConfig(cipherType: type, settings: type.defaultSettings()))
+                                if type.hasConfigurableSettings {
+                                    configuringType = type
+                                } else {
+                                    selectedCiphers.append(CipherConfig(cipherType: type, settings: type.defaultSettings()))
+                                }
                             }) {
                                 HStack {
-                                    Text(type.rawValue)
-                                        .font(.system(size: 16, weight: .semibold, design: .rounded))
-                                        .foregroundColor(.white)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(type.rawValue)
+                                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                            .foregroundColor(.white)
+                                        if type.hasConfigurableSettings {
+                                            Text("Tap to configure")
+                                                .font(.system(size: 11, design: .rounded))
+                                                .foregroundColor(.gray)
+                                        }
+                                    }
 
                                     Spacer()
 
@@ -55,7 +68,7 @@ struct CipherPickerView: View {
                                             .foregroundColor(.orange)
                                     }
 
-                                    Image(systemName: "plus.circle")
+                                    Image(systemName: type.hasConfigurableSettings ? "gearshape.fill" : "plus.circle")
                                         .foregroundColor(.orange)
                                 }
                                 .padding()
@@ -75,5 +88,18 @@ struct CipherPickerView: View {
                 }
             }
         }
+        .sheet(item: $configuringType) { type in
+            CipherSettingsView(
+                cipherType: type,
+                initialSettings: type.defaultSettings()
+            ) { finalSettings in
+                selectedCiphers.append(CipherConfig(cipherType: type, settings: finalSettings))
+            }
+        }
     }
+}
+
+// Make CipherType identifiable for sheet(item:)
+extension CipherType: Identifiable {
+    public var id: String { rawValue }
 }

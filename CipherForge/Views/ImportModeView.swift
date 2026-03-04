@@ -4,6 +4,7 @@ struct ImportModeView: View {
     @ObservedObject var viewModel: CipherViewModel
     @Binding var isPresented: Bool
     @State private var shareCode = ""
+    @State private var modeName = ""
     @State private var showError = false
     @State private var errorMessage = ""
     @State private var showSuccess = false
@@ -110,6 +111,20 @@ struct ImportModeView: View {
                     }
                     .padding(.horizontal)
 
+                    // Optional name field
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("MODE NAME (OPTIONAL)")
+                            .font(.system(size: 14, weight: .bold, design: .serif))
+                            .kerning(1)
+                            .foregroundColor(.orange)
+
+                        TextField("Imported Mode", text: $modeName)
+                            .textFieldStyle(CustomTextFieldStyle())
+                            .autocapitalization(.words)
+                            .disableAutocorrection(true)
+                    }
+                    .padding(.horizontal)
+
                     // Import Button
                     Button(action: importMode) {
                         Text("IMPORT MODE")
@@ -197,9 +212,10 @@ struct ImportModeView: View {
 
         let trimmedCode = shareCode.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if viewModel.importFromShareCode(trimmedCode) {
+        if viewModel.importFromShareCode(trimmedCode, name: modeName) {
             showSuccess = true
             shareCode = ""
+            modeName = ""
 
             // Auto-dismiss after 1.5 seconds
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {

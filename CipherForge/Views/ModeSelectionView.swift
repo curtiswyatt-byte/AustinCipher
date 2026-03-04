@@ -220,6 +220,7 @@ struct EditCustomModeView: View {
     @State private var modeDescription: String
     @State private var selectedCiphers: [CipherConfig]
     @State private var showingCipherPicker = false
+    @State private var editingSettingsIndex: Int?
 
     init(viewModel: CipherViewModel, mode: CipherMode, isPresented: Binding<Bool>) {
         self.viewModel = viewModel
@@ -237,19 +238,16 @@ struct EditCustomModeView: View {
 
             ScrollView {
                 VStack(spacing: 25) {
-                    // Header
                     VStack(spacing: 8) {
                         Text("✏️ Edit Custom Mode")
                             .font(.system(size: 28, weight: .bold, design: .rounded))
                             .foregroundColor(.orange)
-
                         Text("Modify your cipher combination")
                             .font(.system(size: 14, design: .rounded))
                             .foregroundColor(.gray)
                     }
                     .padding(.top)
 
-                    // Name and Emoji
                     VStack(alignment: .leading, spacing: 15) {
                         Text("Mode Details")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
@@ -258,17 +256,11 @@ struct EditCustomModeView: View {
                         HStack {
                             Text(modeEmoji)
                                 .font(.system(size: 40))
-                                .onTapGesture {
-                                    let emojis = ["🔒", "⚡", "🌟", "🎯", "🚀", "💎", "🔮", "⚔️", "🛡️", "👑"]
-                                    if let index = emojis.firstIndex(of: modeEmoji) {
-                                        modeEmoji = emojis[(index + 1) % emojis.count]
-                                    }
-                                }
+                                .onTapGesture { cycleEmoji() }
 
                             VStack(spacing: 8) {
                                 TextField("Mode Name", text: $modeName)
                                     .textFieldStyle(CustomTextFieldStyle())
-
                                 TextField("Description", text: $modeDescription)
                                     .textFieldStyle(CustomTextFieldStyle())
                             }
@@ -276,15 +268,12 @@ struct EditCustomModeView: View {
                     }
                     .padding(.horizontal)
 
-                    // Cipher Chain
                     VStack(alignment: .leading, spacing: 15) {
                         HStack {
                             Text("Cipher Chain")
                                 .font(.system(size: 18, weight: .bold, design: .rounded))
                                 .foregroundColor(.orange)
-
                             Spacer()
-
                             Button(action: { showingCipherPicker = true }) {
                                 Label("Add Cipher", systemImage: "plus.circle.fill")
                                     .font(.system(size: 14, weight: .semibold, design: .rounded))
@@ -297,7 +286,6 @@ struct EditCustomModeView: View {
                                 Image(systemName: "link.badge.plus")
                                     .font(.system(size: 40))
                                     .foregroundColor(.orange.opacity(0.5))
-
                                 Text("No ciphers added yet")
                                     .font(.system(size: 14, design: .rounded))
                                     .foregroundColor(.gray)
@@ -305,44 +293,11 @@ struct EditCustomModeView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 40)
                         } else {
-                            VStack(spacing: 10) {
-                                ForEach(Array(selectedCiphers.enumerated()), id: \.element.id) { index, config in
-                                    HStack {
-                                        Text("\(index + 1)")
-                                            .font(.system(size: 14, weight: .bold, design: .rounded))
-                                            .foregroundColor(.orange)
-                                            .frame(width: 30, height: 30)
-                                            .background(Circle().fill(Color.orange.opacity(0.2)))
-
-                                        Text(config.cipherType.rawValue)
-                                            .font(.system(size: 16, weight: .semibold, design: .rounded))
-                                            .foregroundColor(.white)
-
-                                        Spacer()
-
-                                        Button(action: {
-                                            selectedCiphers.remove(at: index)
-                                        }) {
-                                            Image(systemName: "xmark.circle.fill")
-                                                .foregroundColor(.red)
-                                        }
-                                    }
-                                    .padding()
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color(hex: "1a1a1a"))
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 12)
-                                                    .stroke(Color.orange.opacity(0.3), lineWidth: 1)
-                                            )
-                                    )
-                                }
-                            }
+                            cipherChainList
                         }
                     }
                     .padding(.horizontal)
 
-                    // Save Button
                     Button(action: saveChanges) {
                         Text("Save Changes")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
@@ -352,8 +307,7 @@ struct EditCustomModeView: View {
                             .background(
                                 LinearGradient(
                                     gradient: Gradient(colors: [Color.orange, Color(hex: "ff8800")]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
+                                    startPoint: .leading, endPoint: .trailing
                                 )
                             )
                             .cornerRadius(12)
@@ -376,10 +330,79 @@ struct EditCustomModeView: View {
         .sheet(isPresented: $showingCipherPicker) {
             CipherPickerView(selectedCiphers: $selectedCiphers)
         }
+        .sheet(item: $editingSettingsIndex) { index in
+            CipherSettingsView(
+                cipherType: selectedCiphers[index].cipherType,
+                initialSettings: selectedCiphers[index].settings,
+                isEditing: true
+            ) { newSettings in
+                selectedCiphers[index] = CipherConfig(
+                    id: selectedCiphers[index].id,
+                    cipherType: selectedCiphers[index].cipherType,
+                    settings: newSettings
+                )
+            }
+        }
+    }
+
+    private var cipherChainList: some View {
+        List {
+            ForEach(Array(selectedCiphers.enumerated()), id: \.element.id) { index, config in
+                HStack {
+                    Text("\(index + 1)")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundColor(.orange)
+                        .frame(width: 30, height: 30)
+                        .background(Circle().fill(Color.orange.opacity(0.2)))
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(config.cipherType.rawValue)
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                        if !config.settingsSummary.isEmpty {
+                            Text(config.settingsSummary)
+                                .font(.system(size: 11, design: .rounded))
+                                .foregroundColor(.gray)
+                        }
+                    }
+
+                    Spacer()
+
+                    if config.cipherType.hasConfigurableSettings {
+                        Button(action: { editingSettingsIndex = index }) {
+                            Image(systemName: "gearshape.fill")
+                                .foregroundColor(.orange.opacity(0.8))
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(hex: "1a1a1a"))
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.orange.opacity(0.3), lineWidth: 1))
+                )
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+            }
+            .onMove { from, to in selectedCiphers.move(fromOffsets: from, toOffset: to) }
+            .onDelete { offsets in selectedCiphers.remove(atOffsets: offsets) }
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(Color.clear)
+        .frame(height: CGFloat(selectedCiphers.count) * 76)
+        .environment(\.editMode, .constant(.active))
+    }
+
+    private func cycleEmoji() {
+        let current = modeEmojis.firstIndex(of: modeEmoji) ?? -1
+        modeEmoji = modeEmojis[(current + 1) % modeEmojis.count]
     }
 
     private func saveChanges() {
-        // Find and update the mode
         if let index = viewModel.customModes.firstIndex(where: { $0.id == mode.id }) {
             var updatedMode = mode
             updatedMode.name = modeName

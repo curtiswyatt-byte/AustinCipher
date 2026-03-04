@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HistoryView: View {
     @ObservedObject var history: MessageHistory
+    var onLoadText: ((String) -> Void)? = nil
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -28,7 +29,9 @@ struct HistoryView: View {
                     ScrollView {
                         LazyVStack(spacing: 15) {
                             ForEach(history.records) { record in
-                                HistoryCard(record: record)
+                                HistoryCard(record: record, onLoadText: onLoadText.map { callback in
+                                    { text in callback(text); dismiss() }
+                                })
                             }
                         }
                         .padding()
@@ -69,6 +72,7 @@ struct HistoryView: View {
 
 struct HistoryCard: View {
     let record: MessageRecord
+    var onLoadText: ((String) -> Void)? = nil
     @State private var isExpanded = false
 
     var body: some View {
@@ -121,17 +125,34 @@ struct HistoryCard: View {
                     .lineLimit(isExpanded ? nil : 2)
             }
 
-            // Expand button
-            Button(action: { isExpanded.toggle() }) {
-                HStack {
-                    Spacer()
-                    Text(isExpanded ? "Show Less" : "Show More")
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
-                        .foregroundColor(.orange)
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 10))
-                        .foregroundColor(.orange)
-                    Spacer()
+            // Expand / load buttons
+            HStack {
+                Button(action: { isExpanded.toggle() }) {
+                    HStack(spacing: 4) {
+                        Text(isExpanded ? "Show Less" : "Show More")
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                            .font(.system(size: 10))
+                    }
+                    .foregroundColor(.orange)
+                }
+
+                Spacer()
+
+                if let load = onLoadText {
+                    Button(action: { load(record.encryptedText) }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.up.doc.fill")
+                                .font(.system(size: 10))
+                            Text("Load Result")
+                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        }
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.orange)
+                        .cornerRadius(8)
+                    }
                 }
             }
         }

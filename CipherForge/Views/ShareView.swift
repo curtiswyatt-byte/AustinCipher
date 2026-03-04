@@ -52,44 +52,6 @@ struct ShareView: View {
                             .background(Color.orange.opacity(0.3))
                             .padding(.horizontal)
 
-                        // PIN Code
-                        VStack(spacing: 15) {
-                            Text("PIN Code")
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
-                                .foregroundColor(.orange)
-
-                            Text(viewModel.generatePIN())
-                                .font(.system(size: 48, weight: .bold, design: .monospaced))
-                                .foregroundColor(.orange)
-                                .tracking(8)
-                                .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .fill(Color(hex: "1a1a1a"))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 15)
-                                                .stroke(Color.orange.opacity(0.3), lineWidth: 2)
-                                        )
-                                )
-
-                            Button(action: {
-                                #if os(macOS)
-                                NSPasteboard.general.clearContents()
-                                NSPasteboard.general.setString(viewModel.generatePIN(), forType: .string)
-                                #else
-                                UIPasteboard.general.string = viewModel.generatePIN()
-                                #endif
-                            }) {
-                                Label("Copy PIN", systemImage: "doc.on.doc")
-                                    .font(.system(size: 14, weight: .semibold, design: .rounded))
-                                    .foregroundColor(.orange)
-                            }
-                        }
-
-                        Divider()
-                            .background(Color.orange.opacity(0.3))
-                            .padding(.horizontal)
-
                         // Share Code
                         VStack(spacing: 15) {
                             Text("Share Code")
