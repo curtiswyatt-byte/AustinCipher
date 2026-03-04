@@ -32,7 +32,7 @@
 		A1000045000000000000001 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000046000000000000001 /* ShareView.swift */; };
 		A1000047000000000000001 /* ImportModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000048000000000000001 /* ImportModeView.swift */; };
 		A1000049000000000000001 /* CipherPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000050000000000000001 /* CipherPickerView.swift */; };
-		A1000100000000000000001 /* CipherSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000101000000000000001 /* CipherSettingsView.swift */; };
+		A1000102000000000000001 /* CipherSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000101000000000000001 /* CipherSettingsView.swift */; };
 		A1000051000000000000001 /* CustomTextFieldStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000052000000000000001 /* CustomTextFieldStyle.swift */; };
 		A1000053000000000000001 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000054000000000000001 /* ColorExtension.swift */; };
 /* End PBXBuildFile section */
@@ -272,7 +272,7 @@
 				A1000045000000000000001 /* ShareView.swift in Sources */,
 				A1000047000000000000001 /* ImportModeView.swift in Sources */,
 				A1000049000000000000001 /* CipherPickerView.swift in Sources */,
-				A1000100000000000000001 /* CipherSettingsView.swift in Sources */,
+				A1000102000000000000001 /* CipherSettingsView.swift in Sources */,
 				A1000051000000000000001 /* CustomTextFieldStyle.swift in Sources */,
 				A1000053000000000000001 /* ColorExtension.swift in Sources */,
 			);
