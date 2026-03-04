@@ -87,7 +87,10 @@ struct CustomModeView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 40)
                         } else {
-                            cipherChainList
+                            CipherChainListView(
+                                selectedCiphers: $selectedCiphers,
+                                editingSettingsIndex: $editingSettingsIndex
+                            )
                         }
                     }
                     .padding(.horizontal)
@@ -140,10 +143,33 @@ struct CustomModeView: View {
         }
     }
 
-    private var cipherChainList: some View {
+    private func cycleEmoji() {
+        let current = modeEmojis.firstIndex(of: modeEmoji) ?? -1
+        modeEmoji = modeEmojis[(current + 1) % modeEmojis.count]
+    }
+
+    private func createMode() {
+        let mode = CipherMode(
+            name: modeName,
+            emoji: modeEmoji,
+            description: modeDescription.isEmpty ? "Custom cipher mode" : modeDescription,
+            cipherChain: selectedCiphers,
+            isCustom: true
+        )
+        viewModel.addCustomMode(mode)
+        isPresented = false
+    }
+}
+
+/// Isolated subview so the List is NOT re-rendered on every text field keystroke.
+struct CipherChainListView: View {
+    @Binding var selectedCiphers: [CipherConfig]
+    @Binding var editingSettingsIndex: Int?
+
+    var body: some View {
         List {
             ForEach(Array(selectedCiphers.enumerated()), id: \.element.id) { index, config in
-                cipherRow(index: index, config: config)
+                CipherRowView(config: config, index: index, editingSettingsIndex: $editingSettingsIndex)
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
@@ -157,8 +183,14 @@ struct CustomModeView: View {
         .frame(height: CGFloat(selectedCiphers.count) * 76)
         .environment(\.editMode, .constant(.active))
     }
+}
 
-    private func cipherRow(index: Int, config: CipherConfig) -> some View {
+struct CipherRowView: View {
+    let config: CipherConfig
+    let index: Int
+    @Binding var editingSettingsIndex: Int?
+
+    var body: some View {
         HStack {
             Text("\(index + 1)")
                 .font(.system(size: 14, weight: .bold, design: .rounded))
@@ -194,23 +226,6 @@ struct CustomModeView: View {
                 .fill(Color(hex: "1a1a1a"))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.orange.opacity(0.3), lineWidth: 1))
         )
-    }
-
-    private func cycleEmoji() {
-        let current = modeEmojis.firstIndex(of: modeEmoji) ?? -1
-        modeEmoji = modeEmojis[(current + 1) % modeEmojis.count]
-    }
-
-    private func createMode() {
-        let mode = CipherMode(
-            name: modeName,
-            emoji: modeEmoji,
-            description: modeDescription.isEmpty ? "Custom cipher mode" : modeDescription,
-            cipherChain: selectedCiphers,
-            isCustom: true
-        )
-        viewModel.addCustomMode(mode)
-        isPresented = false
     }
 }
 

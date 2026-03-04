@@ -293,7 +293,10 @@ struct EditCustomModeView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 40)
                         } else {
-                            cipherChainList
+                            CipherChainListView(
+                                selectedCiphers: $selectedCiphers,
+                                editingSettingsIndex: $editingSettingsIndex
+                            )
                         }
                     }
                     .padding(.horizontal)
@@ -343,58 +346,6 @@ struct EditCustomModeView: View {
                 )
             }
         }
-    }
-
-    private var cipherChainList: some View {
-        List {
-            ForEach(Array(selectedCiphers.enumerated()), id: \.element.id) { index, config in
-                HStack {
-                    Text("\(index + 1)")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundColor(.orange)
-                        .frame(width: 30, height: 30)
-                        .background(Circle().fill(Color.orange.opacity(0.2)))
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(config.cipherType.rawValue)
-                            .font(.system(size: 15, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white)
-                        if !config.settingsSummary.isEmpty {
-                            Text(config.settingsSummary)
-                                .font(.system(size: 11, design: .rounded))
-                                .foregroundColor(.gray)
-                        }
-                    }
-
-                    Spacer()
-
-                    if config.cipherType.hasConfigurableSettings {
-                        Button(action: { editingSettingsIndex = index }) {
-                            Image(systemName: "gearshape.fill")
-                                .foregroundColor(.orange.opacity(0.8))
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(hex: "1a1a1a"))
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.orange.opacity(0.3), lineWidth: 1))
-                )
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-            }
-            .onMove { from, to in selectedCiphers.move(fromOffsets: from, toOffset: to) }
-            .onDelete { offsets in selectedCiphers.remove(atOffsets: offsets) }
-        }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        .background(Color.clear)
-        .frame(height: CGFloat(selectedCiphers.count) * 76)
-        .environment(\.editMode, .constant(.active))
     }
 
     private func cycleEmoji() {
