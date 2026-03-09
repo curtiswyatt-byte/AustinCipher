@@ -41,6 +41,7 @@ enum CipherType: String, Codable, CaseIterable {
     case reverse = "Reverse"
     case number = "Number"
     case elvish = "Elvish"
+    case null = "Null"
 
     var displayName: String {
         return self.rawValue
@@ -58,6 +59,7 @@ enum CipherType: String, Codable, CaseIterable {
         case .reverse: return ReverseCipher()
         case .number: return NumberCipher()
         case .elvish: return ElvishCipher()
+        case .null: return NullCipher()
         }
     }
 

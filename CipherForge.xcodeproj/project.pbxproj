@@ -29,6 +29,7 @@
 		A1000039000000000000001 /* QRCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000040000000000000001 /* QRCodeGenerator.swift */; };
 		A1000041000000000000001 /* PrintUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000042000000000000001 /* PrintUtility.swift */; };
 		A1000043000000000000001 /* ElvishCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000044000000000000001 /* ElvishCipher.swift */; };
+		A1000103000000000000001 /* NullCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000104000000000000001 /* NullCipher.swift */; };
 		A1000045000000000000001 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000046000000000000001 /* ShareView.swift */; };
 		A1000047000000000000001 /* ImportModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000048000000000000001 /* ImportModeView.swift */; };
 		A1000049000000000000001 /* CipherPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000050000000000000001 /* CipherPickerView.swift */; };
@@ -61,6 +62,7 @@
 		A1000040000000000000001 /* QRCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerator.swift; sourceTree = "<group>"; };
 		A1000042000000000000001 /* PrintUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintUtility.swift; sourceTree = "<group>"; };
 		A1000044000000000000001 /* ElvishCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElvishCipher.swift; sourceTree = "<group>"; };
+		A1000104000000000000001 /* NullCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullCipher.swift; sourceTree = "<group>"; };
 		A1000046000000000000001 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 		A1000048000000000000001 /* ImportModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportModeView.swift; sourceTree = "<group>"; };
 		A1000050000000000000001 /* CipherPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherPickerView.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 				A1000024000000000000001 /* ReverseCipher.swift */,
 				A1000026000000000000001 /* NumberCipher.swift */,
 				A1000044000000000000001 /* ElvishCipher.swift */,
+				A1000104000000000000001 /* NullCipher.swift */,
 			);
 			path = Ciphers;
 			sourceTree = "<group>";
@@ -269,6 +272,7 @@
 				A1000039000000000000001 /* QRCodeGenerator.swift in Sources */,
 				A1000041000000000000001 /* PrintUtility.swift in Sources */,
 				A1000043000000000000001 /* ElvishCipher.swift in Sources */,
+				A1000103000000000000001 /* NullCipher.swift in Sources */,
 				A1000045000000000000001 /* ShareView.swift in Sources */,
 				A1000047000000000000001 /* ImportModeView.swift in Sources */,
 				A1000049000000000000001 /* CipherPickerView.swift in Sources */,

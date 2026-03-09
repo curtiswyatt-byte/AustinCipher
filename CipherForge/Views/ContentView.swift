@@ -19,8 +19,6 @@ struct ContentView: View {
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
-            // Tap background to dismiss keyboard
-            .onTapGesture { isInputFocused = false }
 
             VStack(spacing: 12) {
                 // Header
@@ -265,6 +263,8 @@ struct ContentView: View {
             }
             .padding(.top)
         }
+        // Tap anywhere outside a text field to dismiss the keyboard
+        .simultaneousGesture(TapGesture().onEnded { _ in isInputFocused = false })
         .sheet(isPresented: $showingModeSelection) {
             ModeSelectionView(viewModel: viewModel, isPresented: $showingModeSelection)
         }

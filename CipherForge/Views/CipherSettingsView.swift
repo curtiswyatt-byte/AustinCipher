@@ -4,7 +4,7 @@ import SwiftUI
 extension CipherType {
     var hasConfigurableSettings: Bool {
         switch self {
-        case .caesar, .vigenere, .railFence, .substitution: return true
+        case .caesar, .vigenere, .railFence, .substitution, .null: return true
         default: return false
         }
     }
@@ -38,6 +38,7 @@ struct CipherSettingsView: View {
     @State private var keyword: String
     @State private var rails: Int
     @State private var substitutionKey: String
+    @State private var nullChar: String
 
     init(cipherType: CipherType,
          initialSettings: [String: CodableValue],
@@ -48,15 +49,17 @@ struct CipherSettingsView: View {
         self.onConfirm = onConfirm
 
         var s = 3, r = 3
-        var kw = "SECRET", sk = "QWERTYUIOPASDFGHJKLZXCVBNM"
+        var kw = "SECRET", sk = "QWERTYUIOPASDFGHJKLZXCVBNM", nc = "X"
         if case .int(let v) = initialSettings["shift"] { s = v }
         if case .int(let v) = initialSettings["rails"] { r = v }
         if case .string(let v) = initialSettings["keyword"] { kw = v }
         if case .string(let v) = initialSettings["key"] { sk = v }
+        if case .string(let v) = initialSettings["nullChar"] { nc = v }
         _shift = State(initialValue: s)
         _rails = State(initialValue: r)
         _keyword = State(initialValue: kw)
         _substitutionKey = State(initialValue: sk)
+        _nullChar = State(initialValue: nc)
     }
 
     var isValid: Bool {
@@ -207,6 +210,21 @@ struct CipherSettingsView: View {
                     .hint()
             }
 
+        case .null:
+            settingsCard {
+                Text("NULL CHARACTER")
+                    .sectionLabel()
+                TextField("Single letter, e.g. X", text: $nullChar)
+                    .textFieldStyle(CustomTextFieldStyle())
+                    .autocapitalization(.allCharacters)
+                    .disableAutocorrection(true)
+                    .onChange(of: nullChar) { val in
+                        nullChar = String((val.uppercased().filter { $0.isLetter }.first).map(String.init) ?? "X")
+                    }
+                Text("The decoy letter inserted between every real character. Decrypt extracts every other character.")
+                    .hint()
+            }
+
         default:
             EmptyView()
         }
@@ -219,6 +237,7 @@ struct CipherSettingsView: View {
         case .vigenere:    settings["keyword"] = .string(keyword)
         case .railFence:   settings["rails"] = .int(rails)
         case .substitution: settings["key"] = .string(substitutionKey)
+        case .null:        settings["nullChar"] = .string(nullChar.isEmpty ? "X" : nullChar)
         default: break
         }
         onConfirm(settings)
