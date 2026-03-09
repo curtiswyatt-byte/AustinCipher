@@ -42,6 +42,7 @@ enum CipherType: String, Codable, CaseIterable {
     case number = "Number"
     case elvish = "Elvish"
     case null = "Null"
+    case levi = "Levi's Conundrum"
 
     var displayName: String {
         return self.rawValue
@@ -60,6 +61,7 @@ enum CipherType: String, Codable, CaseIterable {
         case .number: return NumberCipher()
         case .elvish: return ElvishCipher()
         case .null: return NullCipher()
+        case .levi: return LeviCipher()
         }
     }
 

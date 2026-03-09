@@ -194,6 +194,7 @@ class CipherViewModel: ObservableObject {
         case "NUM": return .number
         case "ELV": return .elvish
         case "NUL": return .null
+        case "LEV": return .levi
         default: return nil
         }
     }

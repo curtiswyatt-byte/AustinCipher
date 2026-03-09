@@ -6,6 +6,7 @@ struct ModeSelectionView: View {
     @State private var editingMode: CipherMode?
     @State private var showingEditSheet = false
     @State private var showingCustomMode = false
+    @State private var showingNamedSub = false
 
     var body: some View {
         ZStack {
@@ -97,32 +98,50 @@ struct ModeSelectionView: View {
             }
         }
         .overlay(alignment: .bottom) {
-            Button(action: { showingCustomMode = true }) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("CREATE CUSTOM")
-                        .font(.system(size: 16, weight: .black, design: .serif))
-                        .kerning(1)
-                }
-                .foregroundColor(.black)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color(hex: "CD7F32"),
-                            Color.orange,
-                            Color(hex: "ff8800")
-                        ]),
-                        startPoint: .leading,
-                        endPoint: .trailing
+            HStack(spacing: 10) {
+                Button(action: { showingCustomMode = true }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "link.badge.plus")
+                        Text("CIPHER CHAIN")
+                            .font(.system(size: 14, weight: .black, design: .serif))
+                            .kerning(0.8)
+                    }
+                    .foregroundColor(.black)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color(hex: "CD7F32"), .orange, Color(hex: "ff8800")]),
+                            startPoint: .leading, endPoint: .trailing
+                        )
                     )
-                )
-                .shadow(color: .orange.opacity(0.5), radius: 8, x: 0, y: 4)
-                .cornerRadius(12)
-                .padding(.horizontal)
-                .padding(.bottom, 20)
+                    .cornerRadius(12)
+                }
+
+                Button(action: { showingNamedSub = true }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "key.fill")
+                        Text("NAME YOUR CODE")
+                            .font(.system(size: 14, weight: .black, design: .serif))
+                            .kerning(0.8)
+                    }
+                    .foregroundColor(.orange)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(hex: "1a1a1a"))
+                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.orange, lineWidth: 1.5))
+                    )
+                }
             }
+            .shadow(color: .orange.opacity(0.3), radius: 8, x: 0, y: 4)
+            .padding(.horizontal)
+            .padding(.bottom, 20)
+            .background(
+                LinearGradient(colors: [Color.black.opacity(0), Color.black], startPoint: .top, endPoint: .bottom)
+                    .ignoresSafeArea()
+            )
         }
         .sheet(isPresented: $showingEditSheet) {
             if let mode = editingMode {
@@ -131,6 +150,9 @@ struct ModeSelectionView: View {
         }
         .sheet(isPresented: $showingCustomMode) {
             CustomModeView(viewModel: viewModel, isPresented: $showingCustomMode)
+        }
+        .sheet(isPresented: $showingNamedSub) {
+            NamedSubstitutionView(viewModel: viewModel, isPresented: $showingNamedSub)
         }
     }
 }
