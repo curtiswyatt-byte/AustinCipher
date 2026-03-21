@@ -10,6 +10,9 @@ class CipherViewModel: ObservableObject {
 
     let history = MessageHistory()
 
+    /// Tracks the current cipher task so rapid taps cancel the previous one.
+    private var processingTask: Task<Void, Never>?
+
     init() {
         let presets = CipherMode.presets
         self.availableModes = presets
@@ -30,38 +33,39 @@ class CipherViewModel: ObservableObject {
             return
         }
 
-        // Snapshot values so background thread doesn't touch @Published state
-        let text = input
+        // Snapshot values so background work doesn't touch @Published state
         let mode = selectedMode
         let encrypting = isEncrypting
 
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            var result = text
+        // Cancel any in-flight task before starting a new one
+        processingTask?.cancel()
+        processingTask = Task.detached(priority: .userInitiated) { [weak self] in
+            var result = input
 
             if encrypting {
                 for config in mode.cipherChain {
+                    guard !Task.isCancelled else { return }
                     var engine = config.cipherType.createEngine()
-                    for (key, value) in config.settings {
-                        engine.settings[key] = value.anyValue
-                    }
+                    for (key, value) in config.settings { engine.settings[key] = value.anyValue }
                     result = engine.encrypt(result)
                 }
             } else {
                 for config in mode.cipherChain.reversed() {
+                    guard !Task.isCancelled else { return }
                     var engine = config.cipherType.createEngine()
-                    for (key, value) in config.settings {
-                        engine.settings[key] = value.anyValue
-                    }
+                    for (key, value) in config.settings { engine.settings[key] = value.anyValue }
                     result = engine.decrypt(result)
                 }
             }
 
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                self.outputText = result
+            guard !Task.isCancelled else { return }
+            let finalResult = result
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                self.outputText = finalResult
                 self.history.addRecord(
-                    original: text,
-                    encrypted: result,
+                    original: input,
+                    encrypted: finalResult,
                     mode: mode.name,
                     isEncryption: encrypting
                 )
@@ -94,34 +98,33 @@ class CipherViewModel: ObservableObject {
     }
 
     func generateShareCode() -> String {
-        // Generate a shareable code for the current mode
-        var code = "CF:"  // CipherForge prefix
-
+        var code = "CF:"
         for (index, config) in selectedMode.cipherChain.enumerated() {
-            if index > 0 { code += ">" }
-
-            code += config.cipherType.rawValue.prefix(3).uppercased()
-
-            // Add settings
+            if index > 0 { code.append(">") }
+            code.append(contentsOf: config.cipherType.rawValue.prefix(3).uppercased())
             if !config.settings.isEmpty {
-                code += "("
-                let settingsStr = config.settings.map { key, value in
+                code.append("(")
+                var first = true
+                for (key, value) in config.settings {
+                    if !first { code.append(",") }
+                    code.append(contentsOf: key)
+                    code.append(":")
                     switch value {
-                    case .int(let val): return "\(key):\(val)"
-                    case .string(let val): return "\(key):\(val)"
-                    case .bool(let val): return "\(key):\(val)"
+                    case .int(let v):    code.append(contentsOf: String(v))
+                    case .string(let v): code.append(contentsOf: v)
+                    case .bool(let v):   code.append(contentsOf: String(v))
                     }
-                }.joined(separator: ",")
-                code += settingsStr + ")"
+                    first = false
+                }
+                code.append(")")
             }
         }
-
         return code
     }
 
     func importFromShareCode(_ code: String, name: String = "Imported Mode") -> Bool {
         // Parse share code format: CF:CAE(shift:7)>RAI(rails:4)>VIG(keyword:FORTRESS)
-        guard code.hasPrefix("CF:") else { return false }
+        guard code.count <= 500, code.hasPrefix("CF:") else { return false }
 
         let ciphersPart = String(code.dropFirst(3))
         let cipherBlocks = ciphersPart.components(separatedBy: ">")
@@ -195,6 +198,8 @@ class CipherViewModel: ObservableObject {
         case "ELV": return .elvish
         case "NUL": return .null
         case "LEV": return .levi
+        case "COD": return .codebook
+        case "CAL": return .calebProtocol
         default: return nil
         }
     }

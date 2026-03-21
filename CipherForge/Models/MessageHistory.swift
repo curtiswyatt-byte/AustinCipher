@@ -23,6 +23,7 @@ class MessageHistory: ObservableObject {
 
     private let saveKey = "CipherForgeHistory"
     private let maxHistorySize = 500  // Prevent unbounded growth
+    private var pendingSave: DispatchWorkItem?
 
     init() {
         loadHistory()
@@ -42,7 +43,7 @@ class MessageHistory: ObservableObject {
             records.removeFirst()
         }
 
-        saveHistory()
+        saveHistoryDebounced()
     }
 
     func deleteRecord(at offsets: IndexSet) {
@@ -55,7 +56,22 @@ class MessageHistory: ObservableObject {
         saveHistory()
     }
 
+    /// Coalesces rapid saves — only writes to disk 2 seconds after the last addRecord call.
+    private func saveHistoryDebounced() {
+        pendingSave?.cancel()
+        let snapshot = records
+        let key = saveKey
+        let work = DispatchWorkItem {
+            if let encoded = try? JSONEncoder().encode(snapshot) {
+                UserDefaults.standard.set(encoded, forKey: key)
+            }
+        }
+        pendingSave = work
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 2, execute: work)
+    }
+
     private func saveHistory() {
+        pendingSave?.cancel()
         let snapshot = records
         let key = saveKey
         DispatchQueue.global(qos: .background).async {

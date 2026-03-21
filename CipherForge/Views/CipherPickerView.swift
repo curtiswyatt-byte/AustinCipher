@@ -39,7 +39,7 @@ struct CipherPickerView: View {
 
                 ScrollView {
                     VStack(spacing: 12) {
-                        ForEach(CipherType.allCases, id: \.self) { type in
+                        ForEach(CipherType.allCases.filter { $0 != .codebook }, id: \.self) { type in
                             Button(action: {
                                 if type.hasConfigurableSettings {
                                     configuringType = type

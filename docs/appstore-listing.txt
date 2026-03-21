@@ -1,0 +1,143 @@
+========================================
+CIPHERFORGE — APP STORE LISTING METADATA
+========================================
+Bundle ID:        com.cipherforge.app
+Version:          1.0
+Build:            1
+iOS Minimum:      17.0
+Category:         Education  (Primary)
+                  Games > Word  (Secondary)
+Age Rating:       4+  (no objectionable content)
+Price:            Free  (or your choice)
+
+----------------------------------------
+APP NAME  (max 30 chars)
+----------------------------------------
+CipherForge
+
+----------------------------------------
+SUBTITLE  (max 30 chars — shown under name on App Store)
+----------------------------------------
+Forge & Decode Secret Messages
+
+----------------------------------------
+PROMOTIONAL TEXT  (max 170 chars — top of description; can update without resubmission)
+----------------------------------------
+Create and crack secret codes with 14 cipher modes! Share encrypted messages with friends via QR code. Perfect for kids, families, and puzzle lovers.
+
+----------------------------------------
+DESCRIPTION  (max 4000 chars)
+----------------------------------------
+CipherForge turns secret messages into an adventure. Choose from over a dozen cipher modes, chain them together for maximum mystery, or build your very own personal code in The Forge.
+
+🔐 CIPHER MODES INCLUDED:
+• Caesar Cipher — classic letter shift
+• Vigenère Cipher — keyword-powered encryption
+• Atbash — ancient A=Z, B=Y reversal
+• Rail Fence — zigzag message scrambling
+• Pig Latin — the classic playground code
+• Morse Code — dots and dashes like a telegraph operator
+• Substitution — swap every letter with a custom alphabet
+• Reverse — read it backwards
+• Number Cipher — replace letters with numbers
+• Elvish Script — mystical runic encoding
+• Invisible Ink — hide your message with decoy letters
+• Levi's Conundrum — alternating number substitution
+• The Caleb Protocol — swap every pair of letters
+• The Forge — design your own code where every letter maps to your secret symbol or word
+
+⚒️ THE FORGE
+Create a completely personal cipher. Assign any word, symbol, or string to each letter of the alphabet, then share your custom codebook with friends so they can decode your messages.
+
+🔗 CHAIN CIPHERS TOGETHER
+Build multi-layer codes by stacking ciphers. Vigenère → Rail Fence → Caesar? Your message becomes nearly impossible to crack without knowing the full chain.
+
+📡 SHARE WITH FRIENDS
+Generate a QR code or short text share code for any cipher mode. Friends scan or enter the code to import your exact cipher setup — no accounts needed.
+
+📜 MESSAGE HISTORY
+Every message you encode or decode is saved locally so you can refer back to it later. Clear it any time.
+
+🔒 COMPLETELY PRIVATE
+CipherForge works 100% offline. No accounts. No ads. No tracking. No data ever leaves your device.
+
+Perfect for kids learning about cryptography, families playing secret message games, teachers introducing code-breaking concepts, and anyone who loves puzzles.
+
+----------------------------------------
+KEYWORDS  (max 100 chars, comma-separated — do NOT repeat the app name)
+----------------------------------------
+cipher,secret code,encrypt,decode,kids,cryptography,morse code,puzzle,secret message,spy
+
+----------------------------------------
+SUPPORT URL
+----------------------------------------
+https://curtiswyatt-byte.github.io/AustinCipher/
+
+----------------------------------------
+PRIVACY POLICY URL
+----------------------------------------
+https://curtiswyatt-byte.github.io/AustinCipher/
+
+----------------------------------------
+COPYRIGHT
+----------------------------------------
+2026 CipherForge
+
+----------------------------------------
+AGE RATING QUESTIONNAIRE ANSWERS
+(App Store Connect > App Information > Age Rating)
+----------------------------------------
+All questions: None / No
+Result will be: 4+
+
+----------------------------------------
+SCREENSHOTS NEEDED
+(Xcode Simulator > Device > File > Take Screenshot)
+----------------------------------------
+Required sizes — take at least one per category:
+
+iPhone 6.9" (iPhone 16 Pro Max)  — 1320 × 2868 px  ← PRIMARY
+iPhone 6.5" (iPhone 14 Plus)     — 1284 × 2778 px
+iPad 13"    (iPad Pro M4)        — 2064 × 2752 px  ← if submitting for iPad
+
+Suggested screens to capture (6 screenshots max per device):
+1. Main encoding screen — type a message, see it encrypted
+2. Choose Cipher screen — showing all the preset modes
+3. The Forge screen — the 26-letter mapping grid
+4. Share screen — QR code displayed
+5. Import screen — scan QR or enter code
+6. Multi-cipher chain builder (CREATE CUSTOM)
+
+Steps to take screenshots:
+1. Open Xcode → open Simulator (Product > Run)
+2. Select the correct device (iPhone 16 Pro Max for 6.9")
+3. Navigate to the screen
+4. Press Cmd+S (or Device menu > Save Screenshot)
+5. Screenshots save to Desktop
+
+----------------------------------------
+HOW TO ENABLE GITHUB PAGES (for privacy policy URL)
+----------------------------------------
+1. Push the docs/ folder to GitHub (git add docs/ && git commit && git push)
+2. Go to github.com/curtiswyatt-byte/AustinCipher > Settings > Pages
+3. Source: Deploy from a branch
+4. Branch: main  /docs  → Save
+5. Your privacy policy will be live at:
+   https://curtiswyatt-byte.github.io/AustinCipher/
+
+----------------------------------------
+SUBMISSION STEPS IN APP STORE CONNECT
+----------------------------------------
+1. Go to appstoreconnect.apple.com
+2. My Apps → + → New App
+   - Platform: iOS
+   - Name: CipherForge
+   - Primary Language: English (U.S.)
+   - Bundle ID: com.cipherforge.app
+   - SKU: cipherforge-001
+3. Fill in metadata from this file
+4. Upload screenshots
+5. In Xcode: Product → Archive → Distribute App → App Store Connect
+6. Back in App Store Connect: select the uploaded build
+7. Answer age rating questionnaire (all None/No → 4+)
+8. Submit for Review

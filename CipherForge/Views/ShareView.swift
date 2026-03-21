@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreImage.CIFilterBuiltins
 
 struct ShareView: View {
     @ObservedObject var viewModel: CipherViewModel
@@ -11,6 +12,9 @@ struct ShareView: View {
     @State private var showingImageShare = false
 
     var body: some View {
+        // Compute once — used in QR image, text display, and copy button
+        let shareCode = viewModel.generateShareCode()
+
         ZStack {
                 Color.black.ignoresSafeArea()
 
@@ -34,7 +38,7 @@ struct ShareView: View {
                                 .font(.system(size: 18, weight: .bold, design: .rounded))
                                 .foregroundColor(.orange)
 
-                            QRCodeGenerator.generate(from: viewModel.generateShareCode())
+                            QRCodeGenerator.generate(from: shareCode)
                                 .interpolation(.none)
                                 .resizable()
                                 .scaledToFit()
@@ -42,8 +46,11 @@ struct ShareView: View {
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(15)
+                                #if os(iOS)
+                                .onTapGesture { shareQRCode(shareCode) }
+                                #endif
 
-                            Text("Scan this code to share settings")
+                            Text("Tap to share · Friend scans to import")
                                 .font(.system(size: 12, design: .rounded))
                                 .foregroundColor(.gray)
                         }
@@ -58,7 +65,7 @@ struct ShareView: View {
                                 .font(.system(size: 18, weight: .bold, design: .rounded))
                                 .foregroundColor(.orange)
 
-                            Text(viewModel.generateShareCode())
+                            Text(shareCode)
                                 .font(.system(size: 16, weight: .medium, design: .monospaced))
                                 .foregroundColor(.white)
                                 .padding()
@@ -75,9 +82,9 @@ struct ShareView: View {
                             Button(action: {
                                 #if os(macOS)
                                 NSPasteboard.general.clearContents()
-                                NSPasteboard.general.setString(viewModel.generateShareCode(), forType: .string)
+                                NSPasteboard.general.setString(shareCode, forType: .string)
                                 #else
-                                UIPasteboard.general.string = viewModel.generateShareCode()
+                                UIPasteboard.general.string = shareCode
                                 #endif
                             }) {
                                 Label("Copy Code", systemImage: "doc.on.doc")
@@ -165,6 +172,32 @@ struct ShareView: View {
             }
         }
     }
+
+    #if os(iOS)
+    private func shareQRCode(_ code: String) {
+        // Render the QR image at higher resolution for sharing
+        let context = CIContext()
+        let filter = CIFilter.qrCodeGenerator()
+        filter.message = Data(code.utf8)
+        filter.correctionLevel = "M"
+        guard let ciImage = filter.outputImage else { return }
+        let scaled = ciImage.transformed(by: CGAffineTransform(scaleX: 20, y: 20))
+        guard let cgImage = context.createCGImage(scaled, from: scaled.extent) else { return }
+        let uiImage = UIImage(cgImage: cgImage)
+
+        let activityVC = UIActivityViewController(activityItems: [uiImage], applicationActivities: nil)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let rootVC = window.rootViewController {
+            if let popover = activityVC.popoverPresentationController {
+                popover.sourceView = window
+                popover.sourceRect = CGRect(x: window.bounds.midX, y: window.bounds.midY, width: 0, height: 0)
+                popover.permittedArrowDirections = []
+            }
+            rootVC.present(activityVC, animated: true)
+        }
+    }
+    #endif
 }
 
 struct ImageShareView: View {

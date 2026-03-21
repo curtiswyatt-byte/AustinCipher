@@ -43,6 +43,8 @@ enum CipherType: String, Codable, CaseIterable {
     case elvish = "Elvish"
     case null = "Null"
     case levi = "Levi's Conundrum"
+    case codebook = "Codebook"
+    case calebProtocol = "The Caleb Protocol"
 
     var displayName: String {
         return self.rawValue
@@ -62,6 +64,8 @@ enum CipherType: String, Codable, CaseIterable {
         case .elvish: return ElvishCipher()
         case .null: return NullCipher()
         case .levi: return LeviCipher()
+        case .codebook: return CodebookCipher()
+        case .calebProtocol: return CalebProtocolCipher()
         }
     }
 
@@ -223,6 +227,30 @@ extension CipherMode {
                 cipherChain: [
                     CipherConfig(cipherType: .substitution, settings: ["key": .string("QWERTYUIOPASDFGHJKLZXCVBNM")]),
                     CipherConfig(cipherType: .reverse)
+                ]
+            ),
+            CipherMode(
+                name: "Invisible Ink",
+                emoji: "🫥",
+                description: "Hides your message with decoy letters in between",
+                cipherChain: [
+                    CipherConfig(cipherType: .null, settings: ["nullChar": .string("X")])
+                ]
+            ),
+            CipherMode(
+                name: "Levi's Conundrum",
+                emoji: "🔁",
+                description: "A=26, B=1, C=25… alternating number substitution",
+                cipherChain: [
+                    CipherConfig(cipherType: .levi)
+                ]
+            ),
+            CipherMode(
+                name: "The Caleb Protocol",
+                emoji: "🔀",
+                description: "Swaps every pair of letters — austin becomes uatsni",
+                cipherChain: [
+                    CipherConfig(cipherType: .calebProtocol)
                 ]
             )
         ]

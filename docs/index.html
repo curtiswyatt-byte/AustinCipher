@@ -48,6 +48,11 @@
             margin-bottom: 16px;
             text-transform: uppercase;
         }
+        h3 {
+            color: #ffaa44;
+            font-size: 1rem;
+            margin: 20px 0 10px;
+        }
         p { margin-bottom: 12px; color: #ccc; }
         ul { padding-left: 20px; color: #ccc; }
         ul li { margin-bottom: 8px; }
@@ -76,7 +81,7 @@
 
 <header>
     <h1>⚒ CIPHER FORGE</h1>
-    <p>Forge & Decode Secret Messages</p>
+    <p>Forge &amp; Decode Secret Messages</p>
 </header>
 
 <main>
@@ -87,16 +92,48 @@
         <p><strong>CipherForge does not collect, store, or transmit any personal information.</strong></p>
         <p>Everything stays on your device:</p>
         <ul>
-            <li>Message history is stored locally using iOS device storage</li>
+            <li>Message history is stored locally using iOS device storage only</li>
             <li>Custom cipher modes are saved locally on your device</li>
             <li>No account or sign-in is required</li>
             <li>No analytics, tracking, or advertising SDKs are used</li>
             <li>No network requests are made — the app works fully offline</li>
-            <li>No data is shared with third parties</li>
+            <li>No data is shared with third parties, ever</li>
         </ul>
         <p style="margin-top:16px;">
             CipherForge uses Apple's UserDefaults API solely to persist your message history
             and custom cipher modes between app launches. This data never leaves your device.
+        </p>
+
+        <h3>Camera Usage</h3>
+        <p>
+            CipherForge requests access to your camera only when you choose to scan a QR code
+            to import a cipher mode shared by a friend. The camera is used in real time to read
+            the QR code only — no images, video, or any visual data are stored, transmitted,
+            or shared in any way. You can always choose to enter the share code manually instead.
+        </p>
+
+        <h3>Children's Privacy</h3>
+        <p>
+            CipherForge is designed to be fun and safe for users of all ages, including children.
+            We do not knowingly collect any personal information from children under 13 (or the
+            applicable age of digital consent in your country). Because the app collects no personal
+            data from anyone, it is inherently safe for children to use.
+        </p>
+        <p>
+            If you are a parent or guardian and have questions about your child's use of this app,
+            please contact us at the address below.
+        </p>
+
+        <h3>Changes to This Policy</h3>
+        <p>
+            If we ever change this privacy policy, we will update the "Last updated" date above.
+            Since the app collects no data, any future changes are unlikely to affect your privacy.
+        </p>
+
+        <h3>Contact</h3>
+        <p>
+            Questions about privacy? Email us at:
+            <a href="mailto:wyattapplications@thewyattclan.com">wyattapplications@thewyattclan.com</a>
         </p>
     </section>
 
@@ -104,20 +141,23 @@
         <h2>Support</h2>
         <p>Having trouble with CipherForge? Here are some common questions:</p>
         <ul>
-            <li><strong>How do I share a cipher mode?</strong> — Tap SHARE from the main screen to get a QR code or share code. Your friend taps IMPORT and enters the code.</li>
-            <li><strong>How do I create a custom cipher?</strong> — Tap the mode selector at the top, then tap CREATE CUSTOM at the bottom.</li>
-            <li><strong>How do I decrypt a message?</strong> — Paste the encrypted message in the input box and tap DECRYPT (the button changes based on what you're doing).</li>
-            <li><strong>My imported mode isn't working</strong> — Make sure both you and your friend are using the exact same share code, and have selected the same mode.</li>
+            <li><strong>How do I share a cipher mode?</strong> — Tap SHARE from the main screen to get a QR code or a text share code. Your friend taps IMPORT and scans the QR code or types in the code.</li>
+            <li><strong>How do I create a custom cipher?</strong> — Tap the mode selector at the top, then tap CREATE CUSTOM at the bottom to chain together multiple ciphers.</li>
+            <li><strong>How do I use The Forge?</strong> — Tap THE FORGE to create your own personal code where each letter A–Z maps to your own secret word or symbol.</li>
+            <li><strong>How do I decrypt a message?</strong> — Paste the encrypted message in the input box and tap DECRYPT.</li>
+            <li><strong>The QR scanner isn't working</strong> — Make sure you've granted camera permission in Settings &gt; CipherForge &gt; Camera. You can also enter the share code manually.</li>
+            <li><strong>My imported mode isn't working</strong> — Make sure both you and your friend are using the exact same share code and have selected the same mode.</li>
         </ul>
         <p style="margin-top:16px;">
             For bug reports or feature requests, please visit the
-            <a href="https://github.com/curtiswyatt-byte/AustinCipher/issues">GitHub Issues page</a>.
+            <a href="https://github.com/curtiswyatt-byte/AustinCipher/issues">GitHub Issues page</a>
+            or email <a href="mailto:wyattapplications@thewyattclan.com">wyattapplications@thewyattclan.com</a>.
         </p>
     </section>
 
     <section>
         <h2>About</h2>
-        <p>CipherForge is a secret message encoder and decoder for kids, families, and puzzle lovers. Choose from 12 themed cipher modes — from Caesar shifts to Elvish runes — or build your own multi-cipher chain.</p>
+        <p>CipherForge is a secret message encoder and decoder for kids, families, and puzzle lovers. Choose from over a dozen themed cipher modes — from Caesar shifts to Elvish runes to The Caleb Protocol — or build your own multi-cipher chain. Share encoded messages with friends via QR code or share code.</p>
         <p>
             Source code: <a href="https://github.com/curtiswyatt-byte/AustinCipher">github.com/curtiswyatt-byte/AustinCipher</a>
         </p>

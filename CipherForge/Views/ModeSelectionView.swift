@@ -21,21 +21,11 @@ struct ModeSelectionView: View {
                             .kerning(1.5)
                             .foregroundColor(.orange)
 
-                        Text("SELECT A PRESET MODE")
-                            .font(.system(size: 11, weight: .semibold, design: .serif))
-                            .kerning(1)
-                            .foregroundColor(.gray)
                     }
                     .padding(.top, 60)
 
                     // Preset Modes
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("PRESET MODES")
-                            .font(.system(size: 14, weight: .bold, design: .serif))
-                            .kerning(1)
-                            .foregroundColor(.orange)
-                            .padding(.horizontal)
-
                             ForEach(viewModel.availableModes) { mode in
                                 ModeCard(
                                     mode: mode,
@@ -121,7 +111,7 @@ struct ModeSelectionView: View {
                 Button(action: { showingNamedSub = true }) {
                     HStack(spacing: 6) {
                         Image(systemName: "key.fill")
-                        Text("NAME YOUR CODE")
+                        Text("THE FORGE")
                             .font(.system(size: 14, weight: .black, design: .serif))
                             .kerning(0.8)
                     }

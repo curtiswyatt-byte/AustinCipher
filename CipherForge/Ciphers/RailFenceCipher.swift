@@ -6,7 +6,7 @@ class RailFenceCipher: CipherEngine {
     var settings: [String: Any] = ["rails": 3]
 
     func encrypt(_ text: String) -> String {
-        let rails = max(2, settings["rails"] as? Int ?? 3)
+        let rails = min(50, max(2, settings["rails"] as? Int ?? 3))
 
         // Replace spaces with a special marker that Rail Fence can process
         // Use ¶ (pilcrow) for Rail Fence space markers (different from § used by Pig Latin)
@@ -47,7 +47,7 @@ class RailFenceCipher: CipherEngine {
     }
 
     func decrypt(_ text: String) -> String {
-        let rails = max(2, settings["rails"] as? Int ?? 3)
+        let rails = min(50, max(2, settings["rails"] as? Int ?? 3))
 
         guard text.count > rails else {
             // Restore spaces from markers

@@ -8,6 +8,7 @@ struct ImportModeView: View {
     @State private var showError = false
     @State private var errorMessage = ""
     @State private var showSuccess = false
+    @State private var showingScanner = false
 
     var body: some View {
         ZStack {
@@ -81,6 +82,41 @@ struct ImportModeView: View {
                             )
                     )
                     .padding(.horizontal)
+
+                    // Scan QR button (iOS only)
+                    #if os(iOS)
+                    Button(action: { showingScanner = true }) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "qrcode.viewfinder")
+                                .font(.title2)
+                            Text("SCAN QR CODE")
+                                .font(.system(size: 16, weight: .black, design: .serif))
+                                .kerning(1)
+                        }
+                        .foregroundColor(.black)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color(hex: "CD7F32"), .orange, Color(hex: "ff8800")]),
+                                startPoint: .leading, endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(12)
+                        .shadow(color: .orange.opacity(0.4), radius: 6, x: 0, y: 3)
+                    }
+                    .padding(.horizontal)
+
+                    HStack {
+                        VStack { Divider().background(Color.orange.opacity(0.3)) }
+                        Text("or enter code manually")
+                            .font(.system(size: 11, design: .rounded))
+                            .foregroundColor(.gray)
+                            .fixedSize()
+                        VStack { Divider().background(Color.orange.opacity(0.3)) }
+                    }
+                    .padding(.horizontal)
+                    #endif
 
                     // Share Code Input
                     VStack(alignment: .leading, spacing: 10) {
@@ -204,6 +240,14 @@ struct ImportModeView: View {
                     .padding()
             }
         }
+        #if os(iOS)
+        .fullScreenCover(isPresented: $showingScanner) {
+            QRScannerView { scannedCode in
+                shareCode = scannedCode
+            }
+            .ignoresSafeArea()
+        }
+        #endif
     }
 
     private func importMode() {

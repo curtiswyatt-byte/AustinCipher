@@ -32,6 +32,9 @@
 		A1000103000000000000001 /* NullCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000104000000000000001 /* NullCipher.swift */; };
 		A1000105000000000000001 /* LeviCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000106000000000000001 /* LeviCipher.swift */; };
 		A1000107000000000000001 /* NamedSubstitutionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000108000000000000001 /* NamedSubstitutionView.swift */; };
+		A1000109000000000000001 /* CodebookCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001 /* CodebookCipher.swift */; };
+		A1000111000000000000001 /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000112000000000000001 /* QRScannerView.swift */; };
+		A1000113000000000000001 /* CalebProtocolCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000114000000000000001 /* CalebProtocolCipher.swift */; };
 		A1000045000000000000001 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000046000000000000001 /* ShareView.swift */; };
 		A1000047000000000000001 /* ImportModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000048000000000000001 /* ImportModeView.swift */; };
 		A1000049000000000000001 /* CipherPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000050000000000000001 /* CipherPickerView.swift */; };
@@ -66,6 +69,9 @@
 		A1000044000000000000001 /* ElvishCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElvishCipher.swift; sourceTree = "<group>"; };
 		A1000104000000000000001 /* NullCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullCipher.swift; sourceTree = "<group>"; };
 		A1000106000000000000001 /* LeviCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeviCipher.swift; sourceTree = "<group>"; };
+		A1000110000000000000001 /* CodebookCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodebookCipher.swift; sourceTree = "<group>"; };
+		A1000112000000000000001 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
+		A1000114000000000000001 /* CalebProtocolCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalebProtocolCipher.swift; sourceTree = "<group>"; };
 		A1000108000000000000001 /* NamedSubstitutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamedSubstitutionView.swift; sourceTree = "<group>"; };
 		A1000046000000000000001 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 		A1000048000000000000001 /* ImportModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportModeView.swift; sourceTree = "<group>"; };
@@ -121,6 +127,7 @@
 				A1000050000000000000001 /* CipherPickerView.swift */,
 				A1000101000000000000001 /* CipherSettingsView.swift */,
 				A1000108000000000000001 /* NamedSubstitutionView.swift */,
+				A1000112000000000000001 /* QRScannerView.swift */,
 				A1000052000000000000001 /* CustomTextFieldStyle.swift */,
 			);
 			path = Views;
@@ -159,6 +166,8 @@
 				A1000044000000000000001 /* ElvishCipher.swift */,
 				A1000104000000000000001 /* NullCipher.swift */,
 				A1000106000000000000001 /* LeviCipher.swift */,
+				A1000110000000000000001 /* CodebookCipher.swift */,
+				A1000114000000000000001 /* CalebProtocolCipher.swift */,
 			);
 			path = Ciphers;
 			sourceTree = "<group>";
@@ -281,6 +290,9 @@
 				A1000103000000000000001 /* NullCipher.swift in Sources */,
 				A1000105000000000000001 /* LeviCipher.swift in Sources */,
 				A1000107000000000000001 /* NamedSubstitutionView.swift in Sources */,
+				A1000109000000000000001 /* CodebookCipher.swift in Sources */,
+				A1000111000000000000001 /* QRScannerView.swift in Sources */,
+				A1000113000000000000001 /* CalebProtocolCipher.swift in Sources */,
 				A1000045000000000000001 /* ShareView.swift in Sources */,
 				A1000047000000000000001 /* ImportModeView.swift in Sources */,
 				A1000049000000000000001 /* CipherPickerView.swift in Sources */,
@@ -426,6 +438,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Used to scan QR codes for importing cipher modes.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -464,6 +477,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Used to scan QR codes for importing cipher modes.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

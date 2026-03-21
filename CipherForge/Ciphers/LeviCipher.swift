@@ -23,11 +23,12 @@ class LeviCipher: CipherEngine {
 
     func encrypt(_ text: String) -> String {
         var result = ""
+        result.reserveCapacity(text.count * 3)
         var needsSeparator = false
         for char in text.uppercased() {
             if let num = Self.letterToNumber[char] {
-                if needsSeparator { result += "-" }
-                result += String(num)
+                if needsSeparator { result.append("-") }
+                result.append(contentsOf: String(num))
                 needsSeparator = true
             } else {
                 result.append(char)

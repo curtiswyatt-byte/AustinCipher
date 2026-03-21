@@ -157,8 +157,8 @@ struct CipherSettingsView: View {
                     .textFieldStyle(CustomTextFieldStyle())
                     .autocapitalization(.allCharacters)
                     .disableAutocorrection(true)
-                    .onChange(of: keyword) { val in
-                        keyword = String(val.uppercased().filter { $0.isLetter }.prefix(20))
+                    .onChange(of: keyword) {
+                        keyword = String(keyword.uppercased().filter { $0.isLetter }.prefix(20))
                     }
                 Text("The keyword repeats across your message. Each letter sets a Caesar shift. Longer keywords = stronger cipher.")
                     .hint()
@@ -189,9 +189,9 @@ struct CipherSettingsView: View {
                     .autocapitalization(.allCharacters)
                     .disableAutocorrection(true)
                     .font(.system(size: 13, design: .monospaced))
-                    .onChange(of: substitutionKey) { val in
+                    .onChange(of: substitutionKey) {
                         var seen = Set<Character>()
-                        substitutionKey = String(val.uppercased().filter { c in
+                        substitutionKey = String(substitutionKey.uppercased().filter { c in
                             c.isLetter && seen.insert(c).inserted
                         }.prefix(26))
                     }
@@ -218,8 +218,8 @@ struct CipherSettingsView: View {
                     .textFieldStyle(CustomTextFieldStyle())
                     .autocapitalization(.allCharacters)
                     .disableAutocorrection(true)
-                    .onChange(of: nullChar) { val in
-                        nullChar = String((val.uppercased().filter { $0.isLetter }.first).map(String.init) ?? "X")
+                    .onChange(of: nullChar) {
+                        nullChar = String((nullChar.uppercased().filter { $0.isLetter }.first).map(String.init) ?? "X")
                     }
                 Text("The decoy letter inserted between every real character. Decrypt extracts every other character.")
                     .hint()

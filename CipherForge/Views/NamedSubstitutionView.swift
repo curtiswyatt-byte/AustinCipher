@@ -6,24 +6,50 @@ struct NamedSubstitutionView: View {
 
     @State private var codeName = ""
     @State private var codeEmoji = "🗝️"
-    @State private var key = ""
+    /// One entry per letter A–Z (indices 0–25)
+    @State private var mappings: [String] = Array(repeating: "", count: 26)
 
-    private let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    private let alphabet: [Character] = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-    var isValid: Bool { codeName.count > 0 && key.count == 26 }
+    // MARK: - Validation
+
+    var filledCount: Int { mappings.filter { !$0.isEmpty }.count }
+
+    /// Returns the set of mapping strings that appear more than once.
+    var duplicates: Set<String> {
+        var seen = Set<String>()
+        var dups = Set<String>()
+        for m in mappings where !m.isEmpty {
+            if !seen.insert(m).inserted { dups.insert(m) }
+        }
+        return dups
+    }
+
+    var hasSpaceInMapping: Bool { mappings.contains { $0.contains(" ") } }
+    var usesReservedUnderscore: Bool { mappings.contains("_") }
+
+    var isValid: Bool {
+        !codeName.isEmpty
+            && filledCount == 26
+            && duplicates.isEmpty
+            && !hasSpaceInMapping
+            && !usesReservedUnderscore
+    }
+
+    // MARK: - Body
 
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 20) {
                     // Header
                     VStack(spacing: 6) {
-                        Text("🗝️ Create Named Cipher")
+                        Text("⚒️ The Forge")
                             .font(.system(size: 26, weight: .bold, design: .rounded))
                             .foregroundColor(.orange)
-                        Text("Build your own A→B code with a custom name")
+                        Text("Give each letter its own secret code")
                             .font(.system(size: 13, design: .rounded))
                             .foregroundColor(.gray)
                     }
@@ -49,57 +75,44 @@ struct NamedSubstitutionView: View {
                     }
                     .padding(.horizontal)
 
-                    // Key builder
-                    VStack(alignment: .leading, spacing: 14) {
-                        Text("YOUR CODE KEY")
-                            .font(.system(size: 12, weight: .bold, design: .serif))
-                            .kerning(1)
-                            .foregroundColor(.orange)
-
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Type 26 unique letters — each replaces A, B, C… in order.")
-                                .font(.system(size: 12, design: .rounded))
-                                .foregroundColor(.gray)
-
-                            // Alphabet reference row
-                            alphabetReferenceRow
-
-                            // Key text field
-                            TextField("e.g. QWERTYUIOPASDFGHJKLZXCVBNM", text: $key)
-                                .textFieldStyle(CustomTextFieldStyle())
-                                .font(.system(size: 15, design: .monospaced))
-                                .autocapitalization(.allCharacters)
-                                .disableAutocorrection(true)
-                                .onChange(of: key) { val in
-                                    var seen = Set<Character>()
-                                    key = String(val.uppercased().filter { c in
-                                        c.isLetter && seen.insert(c).inserted
-                                    }.prefix(26))
-                                }
-
-                            // Progress
-                            HStack {
-                                Text("\(key.count)/26 letters")
-                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                    .foregroundColor(key.count == 26 ? .green : .orange)
-                                Spacer()
-                                if key.count < 26 {
-                                    Text("\(26 - key.count) more needed")
-                                        .font(.system(size: 11, design: .rounded))
-                                        .foregroundColor(.gray)
-                                }
-                            }
+                    // Letter mapping grid
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("YOUR CODE KEY")
+                                .font(.system(size: 12, weight: .bold, design: .serif))
+                                .kerning(1)
+                                .foregroundColor(.orange)
+                            Spacer()
+                            Text("\(filledCount)/26")
+                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .foregroundColor(filledCount == 26 ? .green : .orange)
                         }
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(hex: "1a1a1a"))
-                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.orange.opacity(0.3), lineWidth: 1))
-                        )
 
-                        // Live mapping grid
-                        if key.count > 0 {
-                            MappingGridView(alphabet: alphabet, key: Array(key))
+                        Text("Type what each letter becomes. Any text works — letters, numbers, symbols — as long as each is unique and has no spaces. (\"_\" is reserved.)")
+                            .font(.system(size: 11, design: .rounded))
+                            .foregroundColor(.gray)
+
+                        // Two columns: A–M on left, N–Z on right
+                        HStack(alignment: .top, spacing: 10) {
+                            letterColumn(from: 0, to: 13)
+                            letterColumn(from: 13, to: 26)
+                        }
+
+                        // Validation feedback
+                        if !duplicates.isEmpty {
+                            Label("Duplicate codes: \(duplicates.sorted().joined(separator: ", "))", systemImage: "exclamationmark.triangle.fill")
+                                .font(.system(size: 12, design: .rounded))
+                                .foregroundColor(.red)
+                        }
+                        if hasSpaceInMapping {
+                            Label("Codes cannot contain spaces", systemImage: "exclamationmark.triangle.fill")
+                                .font(.system(size: 12, design: .rounded))
+                                .foregroundColor(.red)
+                        }
+                        if usesReservedUnderscore {
+                            Label("\"_\" is reserved for spaces — choose a different code", systemImage: "exclamationmark.triangle.fill")
+                                .font(.system(size: 12, design: .rounded))
+                                .foregroundColor(.red)
                         }
                     }
                     .padding(.horizontal)
@@ -137,27 +150,20 @@ struct NamedSubstitutionView: View {
         }
     }
 
-    private var alphabetReferenceRow: some View {
-        VStack(spacing: 2) {
-            // Split into two rows so it fits on screen
-            ForEach([0..<13, 13..<26], id: \.lowerBound) { range in
-                HStack(spacing: 0) {
-                    ForEach(Array(alphabet[range]).indices, id: \.self) { i in
-                        Text(String(alphabet[range][i]))
-                            .font(.system(size: 11, weight: .bold, design: .monospaced))
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity)
-                    }
-                }
+    // MARK: - Helpers
+
+    @ViewBuilder
+    private func letterColumn(from start: Int, to end: Int) -> some View {
+        VStack(spacing: 5) {
+            ForEach(start..<end, id: \.self) { i in
+                LetterBoxView(
+                    letter: alphabet[i],
+                    mapping: $mappings[i],
+                    isDuplicate: !mappings[i].isEmpty && duplicates.contains(mappings[i])
+                )
             }
         }
-        .padding(.vertical, 6)
-        .padding(.horizontal, 4)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.orange.opacity(0.08))
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.orange.opacity(0.2), lineWidth: 1))
-        )
+        .frame(maxWidth: .infinity)
     }
 
     private func cycleEmoji() {
@@ -166,11 +172,15 @@ struct NamedSubstitutionView: View {
     }
 
     private func save() {
+        var settings: [String: CodableValue] = [:]
+        for (i, letter) in alphabet.enumerated() {
+            settings[String(letter)] = .string(mappings[i])
+        }
         let mode = CipherMode(
             name: codeName,
             emoji: codeEmoji,
-            description: "Custom A→B substitution cipher",
-            cipherChain: [CipherConfig(cipherType: .substitution, settings: ["key": .string(key)])],
+            description: "Custom codebook cipher",
+            cipherChain: [CipherConfig(cipherType: .codebook, settings: settings)],
             isCustom: true
         )
         viewModel.addCustomMode(mode)
@@ -178,46 +188,44 @@ struct NamedSubstitutionView: View {
     }
 }
 
-/// Isolated grid view so the key TextField doesn't cause it to re-render slowly.
-private struct MappingGridView: View {
-    let alphabet: [Character]
-    let key: [Character]
+// MARK: - Isolated letter box
+
+/// One box per letter — isolated struct so only the changed box re-renders on typing.
+private struct LetterBoxView: View {
+    let letter: Character
+    @Binding var mapping: String
+    let isDuplicate: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("PREVIEW")
-                .font(.system(size: 11, weight: .bold, design: .serif))
-                .kerning(1)
+        HStack(spacing: 5) {
+            Text(String(letter))
+                .font(.system(size: 13, weight: .black, design: .monospaced))
                 .foregroundColor(.orange)
+                .frame(width: 18)
 
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 6), spacing: 6) {
-                ForEach(0..<key.count, id: \.self) { i in
-                    HStack(spacing: 2) {
-                        Text(String(alphabet[i]))
-                            .font(.system(size: 12, weight: .bold, design: .monospaced))
-                            .foregroundColor(.gray)
-                        Text("→")
-                            .font(.system(size: 9))
-                            .foregroundColor(.orange.opacity(0.6))
-                        Text(String(key[i]))
-                            .font(.system(size: 12, weight: .bold, design: .monospaced))
-                            .foregroundColor(.orange)
+            TextField("…", text: $mapping)
+                .textFieldStyle(PlainTextFieldStyle())
+                .font(.system(size: 13, design: .monospaced))
+                .foregroundColor(isDuplicate ? .red : .white)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 5)
+                .padding(.horizontal, 4)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(isDuplicate ? Color(hex: "2a0000") : Color(hex: "1a1a1a"))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(isDuplicate ? Color.red : Color.orange.opacity(0.35), lineWidth: 1)
+                        )
+                )
+                .onChange(of: mapping) {
+                    // Strip spaces immediately as user types
+                    if mapping.contains(" ") {
+                        mapping = mapping.replacingOccurrences(of: " ", with: "")
                     }
-                    .padding(.vertical, 4)
-                    .padding(.horizontal, 6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(Color.orange.opacity(0.1))
-                    )
                 }
-            }
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(hex: "1a1a1a"))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.orange.opacity(0.3), lineWidth: 1))
-        )
     }
 }
 

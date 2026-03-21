@@ -8,14 +8,19 @@ class NumberCipher: CipherEngine {
     private static let aAscii = Int(Character("A").asciiValue!)
 
     func encrypt(_ text: String) -> String {
-        return text.uppercased().map { char in
+        var result = ""
+        result.reserveCapacity(text.count * 4)
+        for char in text.uppercased() {
             if char.isEnglishLetter {
                 let value = Int(char.asciiValue!) - Self.aAscii + 1
-                return "⬡\(value)⬡"
+                result.append("⬡")
+                result.append(contentsOf: String(value))
+                result.append("⬡")
             } else {
-                return String(char)
+                result.append(char)
             }
-        }.joined()
+        }
+        return result
     }
 
     func decrypt(_ text: String) -> String {

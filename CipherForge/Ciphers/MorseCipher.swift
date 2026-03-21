@@ -21,9 +21,15 @@ class MorseCipher: CipherEngine {
     }()
 
     func encrypt(_ text: String) -> String {
-        return text.uppercased().map { char in
-            morseCode[char] ?? String(char)
-        }.joined(separator: "|")
+        var result = ""
+        result.reserveCapacity(text.count * 5)
+        var first = true
+        for char in text.uppercased() {
+            if !first { result.append("|") }
+            result.append(contentsOf: morseCode[char] ?? String(char))
+            first = false
+        }
+        return result
     }
 
     func decrypt(_ text: String) -> String {
